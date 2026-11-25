@@ -1,0 +1,38 @@
+{
+  "customer_id": "valkama",
+  "name": "Valkama Foods Oy",
+  "location": "Seinäjoki",
+  "customer_since": 2018,
+  "business": "Food manufacturer with four production lines. Washdown (wet cleaning) areas, so enclosure rating IP54 is the minimum.",
+  "account_manager": "Anna",
+  "contacts": [
+    {
+      "name": "Teemu Hakala",
+      "role": "Maintenance lead",
+      "style": "Short, informal messages. Says 'urgent' about almost everything. Says 'bigger' or 'stronger' about power, not physical size. Rarely gives part numbers."
+    },
+    {
+      "name": "Sari Niemi",
+      "role": "Purchasing",
+      "style": "Precise. Quotes part numbers and PO references. Cares about price and delivery date."
+    }
+  ],
+  "installed_base": [
+    {"id": "L1", "line": 1, "equipment": "Mixer", "drive": "PD-FC-110", "installed": "2021", "notes": "Profinet module, IP54, motor upsized from 7.5 kW to 11 kW in 2021"},
+    {"id": "L2", "line": 2, "equipment": "Conveyor", "drive": "PD-FC-022", "installed": "2020", "notes": "IP54"},
+    {"id": "L3", "line": 3, "equipment": "Pump", "drive": "PD-FC-150", "installed": "2022", "notes": "IP54"},
+    {"id": "L4", "line": 4, "equipment": "Packaging", "drive": "PD-FC-040", "installed": "2025", "notes": "IP54"}
+  ],
+  "history": [
+    {"id": "h1", "date": "2018-03", "source": "ERP", "text": "Ordered PD-FC-075 with EMC filter for Line 1 mixer."},
+    {"id": "h2", "date": "2019-11", "source": "ERP", "text": "Ordered spare control board for PD-FC-075."},
+    {"id": "h3", "date": "2020-06", "source": "ERP", "text": "Ordered PD-FC-022 for Line 2 conveyor."},
+    {"id": "h4", "date": "2021-09", "source": "call_note", "text": "Teemu wrote 'need a stronger drive for the mixer'. Anna phoned: the mixer motor was being upsized from 7.5 kW to 11 kW. Shipped PD-FC-110 together with a Profinet module."},
+    {"id": "h5", "date": "2022-05", "source": "ERP", "po": "4412", "text": "PO 4412: PD-FC-150 for Line 3 pump."},
+    {"id": "h6", "date": "2023-02", "source": "email", "text": "Teemu: 'URGENT, line is down.' PD-FC-040 shipped overnight."},
+    {"id": "h7", "date": "2023-08", "source": "call_note", "text": "Teemu wrote 'URGENT' again but it was a planned shutdown two weeks later. Anna's note: Teemu says urgent for everything, always ask if the line is down."},
+    {"id": "h8", "date": "2024-04", "source": "ERP", "text": "PD-FC-040 out of stock. PD-FC-045 offered as substitute and accepted."},
+    {"id": "h9", "date": "2024-09", "source": "email", "text": "IP20 variant offered to save cost. Rejected by Sari: washdown area, IP54 minimum."},
+    {"id": "h10", "date": "2025-10", "source": "ERP", "text": "Ordered PD-FC-040 for Line 4 packaging line."}
+  ]
+}

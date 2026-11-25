@@ -1,0 +1,16 @@
+{
+  "company": "Pohjola Drive Systems Oy (fictional)",
+  "notes": "All drives are 400 V. Standard enclosure IP54. A cheaper IP20 variant exists.",
+  "parts": [
+    {"part": "PD-FC-022", "rating_kw": 2.2, "stock": "in stock", "note": ""},
+    {"part": "PD-FC-040", "rating_kw": 4.0, "stock": "in stock", "note": "PD-FC-045 is an accepted substitute"},
+    {"part": "PD-FC-045", "rating_kw": 4.5, "stock": "in stock", "note": "accepted substitute for PD-FC-040"},
+    {"part": "PD-FC-075", "rating_kw": 7.5, "stock": "in stock", "note": ""},
+    {"part": "PD-FC-110", "rating_kw": 11.0, "stock": "in stock", "note": ""},
+    {"part": "PD-FC-150", "rating_kw": 15.0, "stock": "2 units in stock", "note": ""}
+  ],
+  "options": [
+    {"option": "Profinet module", "stock": "in stock"},
+    {"option": "EMC filter", "stock": "in stock"}
+  ]
+}

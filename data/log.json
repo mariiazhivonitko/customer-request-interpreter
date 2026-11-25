@@ -1,0 +1,62 @@
+[
+  {
+    "time": "2026-11-17T11:47:21",
+    "request_id": 1,
+    "sender": "Teemu Hakala",
+    "message": "We need a new drive for the mixer line, same as before but a bit bigger. Rush.",
+    "reading": "Replacement drive for Line 1 Mixer (PD-FC-110), possibly needing a size upgrade from the previous installation.",
+    "action": "corrected",
+    "correction": "For Teemu, ‘bigger’ means the next power class up from the installed drive, so PD-FC-150.",
+    "rule_id": "r001"
+  },
+  {
+    "time": "2026-11-17T12:11:40",
+    "request_id": 1,
+    "sender": "Teemu Hakala",
+    "message": "We need a new drive for the mixer line, same as before but a bit bigger. Rush.",
+    "reading": "Replacement drive for Line 1 Mixer (PD-FC-110), suggesting a slight power increase or identical unit.",
+    "action": "corrected",
+    "correction": "For Valkama Foods Oy, when Teemu compares a drive with “bigger”, “stronger”, “smaller” or “weaker”, he means a higher or lower power class relative to the drive he refers to, not physical size.",
+    "rule_id": "r001"
+  },
+  {
+    "time": "2026-11-17T12:42:23",
+    "request_id": 7,
+    "sender": "Teemu Hakala",
+    "message": "The bakery line drive is acting up again, we need a spare.",
+    "reading": "PD-FC-110: same rating as the current PD-FC-110",
+    "action": "corrected",
+    "correction": "For Valkama, when Teemu says ‘the bakery line’ he means Line 4, the packaging line.",
+    "rule_id": "r002"
+  },
+  {
+    "time": "2026-11-17T13:18:20",
+    "request_id": 5,
+    "sender": "Teemu Hakala",
+    "message": "Can we get a cheaper one this time? Same drive for the pump.",
+    "reading": "PD-FC-110: next power class down from the current PD-FC-150",
+    "action": "corrected",
+    "correction": "For Valkama, when Teemu asks for a cheaper drive he does not want a lower power class. The drive must match the motor, so keep the same rating and only look at price and optional extras. IP54 stays mandatory.",
+    "rule_id": "r003"
+  },
+  {
+    "time": "2026-11-18T11:17:26",
+    "request_id": 7,
+    "sender": "Teemu Hakala",
+    "message": "The bakery line drive is acting up again, we need a spare.",
+    "reading": "PD-FC-040: same rating as the current PD-FC-040",
+    "action": "confirmed",
+    "correction": "",
+    "rule_id": ""
+  },
+  {
+    "time": "2026-11-20T11:07:26",
+    "request_id": 7,
+    "sender": "Teemu Hakala",
+    "message": "The bakery line drive is acting up again, we need a spare.",
+    "reading": "PD-FC-040: same rating as the current PD-FC-040",
+    "action": "confirmed",
+    "correction": "",
+    "rule_id": ""
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "We need a new drive for the mixer line, same as before but a bit bigger. Rush.",
+    "gold": {"part": "PD-FC-150", "options": ["Profinet module"], "ask": "Is the line down, or is this planned?"},
+    "demo": true,
+    "split": "train"
+  },
+  {
+    "id": 2,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "Need one more drive for packaging, like the mixer one but smaller.",
+    "gold": {"part": "PD-FC-075", "options": ["Profinet module"], "ask": "Confirm the Line 4 motor rating"},
+    "demo": true,
+    "split": "heldout"
+  },
+  {
+    "id": 3,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "The conveyor drive is acting up again.",
+    "gold": {"part": "PD-FC-022", "options": [], "ask": "What fault code does the drive show? Do not quote a part yet."},
+    "demo": true,
+    "split": "train"
+  },
+  {
+    "id": 4,
+    "customer_id": "valkama",
+    "sender": "Sari Niemi",
+    "text": "Please quote the same as PO 4412.",
+    "gold": {"part": "PD-FC-150", "options": [], "ask": "Confirm quantity and delivery date"},
+    "demo": true,
+    "split": "train"
+  },
+  {
+    "id": 5,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "Can we get a cheaper one this time? Same drive for the pump.",
+    "gold": {"part": "PD-FC-150", "options": [], "ask": "IP54 is mandatory (washdown), so do not offer IP20; only drop optional extras"},
+    "demo": true,
+    "split": "heldout"
+  },
+  {
+    "id": 6,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "Urgent. Need a spare drive for the pump.",
+    "gold": {"part": "PD-FC-150", "options": [], "ask": "Is the line down? Teemu says urgent for everything"},
+    "demo": true,
+    "split": "heldout"
+  },
+    {
+    "id": 7,
+    "customer_id": "valkama",
+    "sender": "Teemu Hakala",
+    "text": "The bakery line drive is acting up again, we need a spare.",
+    "gold": {"part": "PD-FC-040", "options": [], "ask": "Teemu's 'bakery line' is Line 4 (packaging). Ask for the fault code."},
+    "demo": true,
+    "split": "train"
+  }
+]
