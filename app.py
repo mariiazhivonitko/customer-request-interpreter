@@ -279,6 +279,29 @@ with tab_compare:
                     st.markdown(f"### :green[{a['part']} {'· ' + where if where else ''}]")
                 show_result(after, customer, key="after")
 
+        g = req.get("gold") or {}
+        if g:
+            products = {x["part"]: x for x in interpreter.load_products()["parts"]}
+            gp = g.get("part", "")
+            line = next((f"Line {i['line']} ({i['equipment'].lower()})"
+                         for i in customer["installed_base"] if i["drive"] == gp), "")
+            kw = products.get(gp, {}).get("rating_kw")
+            with st.container(border=True):
+                st.markdown("#### 🎯 Right answer (what an experienced specialist would say)")
+                part_text = f"**{gp}**" + (f", {kw:g} kW drive" if kw else "") + (f" · {line}" if line else "")
+                st.markdown(f"**Part:** {part_text}")
+                opts = g.get("options") or []
+                st.markdown("**Extras:** " + (", ".join(opts) if opts else "none"))
+                if g.get("ask"):
+                    st.markdown(f"**What to know / ask:** {g['ask']}")
+                checks = []
+                for name, res in (("Without Anna's knowledge", bi), ("With Anna's knowledge", ai)):
+                    if res:
+                        ok = res[0]["part"] == gp
+                        checks.append(f"{'✅' if ok else '❌'} {name}: {res[0]['part']}")
+                if checks:
+                    st.caption("  ·  ".join(checks))
+
         st.markdown(f"**How to read the score:** {scoring.LEGEND}.  \n"
                     "The score is calculated from evidence (learned rules, past orders, missing information), "
                     "not reported by the model itself. Without a learned rule it can never reach *Proceed*.")

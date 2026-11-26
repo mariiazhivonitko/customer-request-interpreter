@@ -1,0 +1,15 @@
+model,id,split,condition,expected,got,part_ok,options_ok,runs,avg_conf,overconfident_wrong,errors,message,gold_ask
+qwen3.8-27b-mlx,1,train,no_rules,PD-FC-150,PD-FC-150,1,1,1,0.35,0,0,"We need a new drive for the mixer line, same as before but a bit bigger. Rush.","Is the line down, or is this planned?"
+qwen3.8-27b-mlx,1,train,with_rules,PD-FC-150,PD-FC-150,1,1,1,0.9,0,0,"We need a new drive for the mixer line, same as before but a bit bigger. Rush.","Is the line down, or is this planned?"
+qwen3.8-27b-mlx,2,heldout,no_rules,PD-FC-075,PD-FC-075,1,0,1,0.35,0,0,"Need one more drive for packaging, like the mixer one but smaller.",Confirm the Line 4 motor rating
+qwen3.8-27b-mlx,2,heldout,with_rules,PD-FC-075,PD-FC-075,1,0,1,0.6,0,0,"Need one more drive for packaging, like the mixer one but smaller.",Confirm the Line 4 motor rating
+qwen3.8-27b-mlx,3,train,no_rules,PD-FC-022,PD-FC-022,1,1,1,0.35,0,0,The conveyor drive is acting up again.,What fault code does the drive show? Do not quote a part yet.
+qwen3.8-27b-mlx,3,train,with_rules,PD-FC-022,PD-FC-022,1,1,1,0.5,0,0,The conveyor drive is acting up again.,What fault code does the drive show? Do not quote a part yet.
+qwen3.8-27b-mlx,4,train,no_rules,PD-FC-150,PD-FC-150,1,1,1,0.5,0,0,Please quote the same as PO 4412.,Confirm quantity and delivery date
+qwen3.8-27b-mlx,4,train,with_rules,PD-FC-150,PD-FC-150,1,1,1,0.5,0,0,Please quote the same as PO 4412.,Confirm quantity and delivery date
+qwen3.8-27b-mlx,5,heldout,no_rules,PD-FC-150,PD-FC-150,1,1,1,0.2,0,0,Can we get a cheaper one this time? Same drive for the pump.,"IP54 is mandatory (washdown), so do not offer IP20; only drop optional extras"
+qwen3.8-27b-mlx,5,heldout,with_rules,PD-FC-150,PD-FC-150,1,1,1,0.6,0,0,Can we get a cheaper one this time? Same drive for the pump.,"IP54 is mandatory (washdown), so do not offer IP20; only drop optional extras"
+qwen3.8-27b-mlx,6,heldout,no_rules,PD-FC-150,PD-FC-150,1,1,1,0.5,0,0,Urgent. Need a spare drive for the pump.,Is the line down? Teemu says urgent for everything
+qwen3.8-27b-mlx,6,heldout,with_rules,PD-FC-150,PD-FC-150,1,1,1,0.9,0,0,Urgent. Need a spare drive for the pump.,Is the line down? Teemu says urgent for everything
+qwen3.8-27b-mlx,7,train,no_rules,PD-FC-040,PD-FC-110,0,0,1,0.0,0,0,"The bakery line drive is acting up again, we need a spare.",Teemu's 'bakery line' is Line 4 (packaging). Ask for the fault code.
+qwen3.8-27b-mlx,7,train,with_rules,PD-FC-040,PD-FC-040,1,1,1,0.9,0,0,"The bakery line drive is acting up again, we need a spare.",Teemu's 'bakery line' is Line 4 (packaging). Ask for the fault code.

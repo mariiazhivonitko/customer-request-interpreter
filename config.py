@@ -9,7 +9,7 @@ import os
 
 BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:1234/v1")
 API_KEY = os.getenv("LLM_API_KEY", "lm-studio")  # LM Studio ignores the value
-MODEL = os.getenv("LLM_MODEL", "google/gemma-4-e4b")
+MODEL = os.getenv("LLM_MODEL", "qwen3.8-27b-mlx")
 DEFAULT_MODEL = MODEL  # the app sidebar can switch MODEL at runtime
 TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0"))
 MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "4000"))
