@@ -82,19 +82,51 @@ def propose_rule(customer_name: str, message: str, interpretation: dict, correct
     return {"text": f"For {customer_name}: {correction}", "line": "all"}
 
 
-def add_rule(customer_id: str, text: str, line: str, learned_from: str) -> dict:
+def add_rule(customer_id: str, text: str, line: str, learned_from: str, taught_by: str = "Specialist") -> dict:
     rules = load_rules()
+    used = {r["rule_id"] for r in rules}
+    n = len(rules) + 1
+    while f"r{n:03d}" in used:
+        n += 1
+    today = date.today().isoformat()
     rule = {
-        "rule_id": f"r{len(rules) + 1:03d}",
+        "rule_id": f"r{n:03d}",
         "scope": {"customer_id": customer_id, "line": line},
         "text": text.strip(),
+        "taught_by": taught_by,
         "learned_from": learned_from,
-        "created": date.today().isoformat(),
+        "created": today,
         "status": "approved",
+        "times_confirmed": 0,
+        "last_confirmed": today,
+        "version": 1,
     }
     rules.append(rule)
     _write(RULES_FILE, rules)
     return rule
+
+
+def record_confirmation(rule_ids: list) -> None:
+    """A specialist confirmed a reading that used these rules: add evidence."""
+    if not rule_ids:
+        return
+    rules = load_rules()
+    for r in rules:
+        if r["rule_id"] in rule_ids:
+            r["times_confirmed"] = int(r.get("times_confirmed", 0)) + 1
+            r["last_confirmed"] = date.today().isoformat()
+    _write(RULES_FILE, rules)
+
+
+def set_status(rule_id: str, status: str) -> None:
+    """approved (active) or flagged. Marking a flagged rule reviewed also refreshes it."""
+    rules = load_rules()
+    for r in rules:
+        if r["rule_id"] == rule_id:
+            r["status"] = status
+            if status == "approved":
+                r["last_confirmed"] = date.today().isoformat()
+    _write(RULES_FILE, rules)
 
 
 def delete_rule(rule_id: str) -> None:

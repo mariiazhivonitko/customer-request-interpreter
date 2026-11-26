@@ -1,0 +1,157 @@
+{
+  "7": {
+    "model": "qwen3.8-27b-mlx",
+    "before": {
+      "interpretations": [
+        {
+          "summary": "PD-FC-110: same rating as the current PD-FC-110, with Profinet module",
+          "part": "PD-FC-110",
+          "options": [
+            "Profinet module"
+          ],
+          "evidence": [
+            "Model reasoning: The message refers to the 'bakery line', which is not explicitly named in the installed base, but Line 1 Mixer (L1) is the most likely candidate for a bakery line in a food manufacturer. The installed drive on L1 is PD-FC-110 (from the 2021 upgrade in h4). The phrase 'acting up again' suggests a fault report, and 'we need a spare' means they want the same drive as currently installed. According to rule 10, if the message reports a problem and does not order anything (or asks for a spare), use change 'same'.",
+            "L1: Line 1 Mixer has PD-FC-110 installed, with Profinet module",
+            "h4: 2021 upgrade to PD-FC-110 with Profinet module for the mixer",
+            "h7: Teemu says 'urgent' about everything, but here he just says 'acting up again', so it's a fault report/spare request"
+          ],
+          "current_part": "PD-FC-110",
+          "change": "same",
+          "score": {
+            "value": 0,
+            "band": "Questionable",
+            "colour": "red",
+            "reasons": [
+              [
+                0,
+                "No learned rule supports this reading"
+              ],
+              [
+                30,
+                "Past orders mention this drive (h4)"
+              ],
+              [
+                -15,
+                "Missing: Which production line is the 'bakery line' (Line 1 Mixer or Line 4 Packaging?)"
+              ],
+              [
+                -15,
+                "Other possible reading: PD-FC-040"
+              ]
+            ],
+            "rules_used": [],
+            "ignored": []
+          },
+          "confidence": 0.0
+        },
+        {
+          "summary": "PD-FC-040: same rating as the current PD-FC-040",
+          "part": "PD-FC-040",
+          "options": [],
+          "evidence": [
+            "Model reasoning: Alternatively, 'bakery line' could refer to Line 4 Packaging (L4), which is the most recent installation (2025) and might be associated with bakery packaging. The installed drive is PD-FC-040. 'Acting up again' and 'need a spare' would mean the same drive, PD-FC-040.",
+            "L4: Line 4 Packaging has PD-FC-040 installed",
+            "h10: Ordered PD-FC-040 for Line 4 packaging line in 2025"
+          ],
+          "current_part": "PD-FC-040",
+          "change": "same",
+          "score": {
+            "value": 0,
+            "band": "Questionable",
+            "colour": "red",
+            "reasons": [
+              [
+                0,
+                "No learned rule supports this reading"
+              ],
+              [
+                30,
+                "Past orders mention this drive (h10)"
+              ],
+              [
+                -15,
+                "Missing: Which production line is the 'bakery line' (Line 1 Mixer or Line 4 Packaging?)"
+              ],
+              [
+                -15,
+                "Other possible reading: PD-FC-110"
+              ]
+            ],
+            "rules_used": [],
+            "ignored": []
+          },
+          "confidence": 0.0
+        }
+      ],
+      "missing_specs": [
+        "Which production line is the 'bakery line' (Line 1 Mixer or Line 4 Packaging?)"
+      ],
+      "uncertainties": [
+        "Teemu's 'acting up again' may indicate a recurring fault; the line might be down or not (per h7, always ask if the line is down)"
+      ],
+      "question_to_ask": "Which line do you mean by 'bakery line' – the mixer (Line 1) or the packaging line (Line 4)? And is the line currently down?",
+      "next_steps": [
+        "Confirm which line is meant",
+        "Check if the line is down (per h7)",
+        "Diagnose the fault before shipping a spare",
+        "Check stock for PD-FC-110 or PD-FC-040"
+      ],
+      "warnings": [],
+      "model": "qwen3.8-27b-mlx",
+      "prompt": "You help an account specialist who does not know this customer well.\nA customer sent a vague message. Work out what the customer most likely means,\nusing ONLY the facts given below. Never invent facts, part numbers or stock.\n\nHow to think:\n1. Find which production line / equipment the message refers to.\n   For \"like the X one but ...\" the reference machine is X.\n2. Read the APPROVED RULES first. They come from experienced specialists and\n   override everything else.\n3. current_part = the drive installed on the machine used as the reference. For\n   \"like the X one but ...\" the reference is machine X, not the machine the new\n   drive is for. Otherwise it is the machine the message is about (see INSTALLED BASE).\n4. change = how the wanted drive relates to current_part, using the wording of the\n   message, the rules and the sender's style:\n   - \"same\": same power rating (same as before, spare, replacement, fault report)\n   - \"next_higher\": one step up in power rating (for example bigger, stronger)\n   - \"next_lower\": one step down in power rating (for example smaller, weaker)\n   - \"other\": none of these fits; then choose 'part' yourself\n5. 'part' = your choice of part number from the catalogue (it is checked against\n   current_part and change afterwards).\n6. options = add-on options (such as a module) that the history or installed base\n   shows for the same machine.\n7. Give 1 to 3 interpretations, best first. Add an alternative only if the facts\n   really support another reading. If an approved rule settles the question, give\n   only one interpretation.\n8. In 'evidence' list the ids you relied on (for example h4, L1, r001), each with a\n   short reason. Always include the id of every approved rule you applied.\n9. Suggest ONE question the specialist can ask the customer by phone to confirm.\n10. If the message reports a problem and does not order anything, use change \"same\"\n    and suggest diagnosing first in the next steps.\n11. missing_specs = facts needed to choose the part that are NOT given below (for\n    example the power of a new motor). Empty list if the part follows from the facts.\n    Questions about urgency or fault codes go to 'uncertainties', not here.\n12. In 'reasoning', first write one or two sentences: which machine, which drive is\n    installed now, and what the sender's wording means. Then fill the other fields.\n\nReturn JSON only.\n\nEXAMPLE (a different customer, for format only)\nCustomer: Example Plastics Oy. INSTALLED BASE: L1: Line 1 press, drive PD-FC-075 (upgraded 2022).\nHistory: e1 [2022-02, call_note]: Customer asked for a 'stronger' drive for the press; motor was upsized, shipped PD-FC-075 with EMC filter.\nMessage from Ville: \"Need another drive for the press, same as last time.\"\nAnswer:\n{\"interpretations\":[{\"reasoning\":\"The press is Line 1. Its installed drive is PD-FC-075 from the 2022 upgrade, and 'same as last time' means that drive again with the EMC filter from that order.\",\"current_part\":\"PD-FC-075\",\"change\":\"same\",\"part\":\"PD-FC-075\",\"summary\":\"Same drive as the 2022 upgrade for the Line 1 press\",\"options\":[\"EMC filter\"],\"evidence\":[\"e1: last order for the press was PD-FC-075 with EMC filter\",\"L1: installed drive\"]},{\"reasoning\":\"The customer might want more power than last time.\",\"current_part\":\"PD-FC-075\",\"change\":\"next_higher\",\"part\":\"PD-FC-110\",\"summary\":\"One power class above the current press drive\",\"options\":[\"EMC filter\"],\"evidence\":[\"L1: installed drive PD-FC-075\"]}],\"missing_specs\":[],\"uncertainties\":[\"Unclear whether the press motor is unchanged since 2022\"],\"question_to_ask\":\"Is this a spare for the current 2022 setup?\",\"next_steps\":[\"Check stock\",\"Draft a quote with the EMC filter\"]}\n\nNOW THE REAL TASK\n\nPRODUCT CATALOGUE\nCompany: Pohjola Drive Systems Oy (fictional). All drives are 400 V. Standard enclosure IP54. A cheaper IP20 variant exists.\n- PD-FC-022: 2.2 kW, in stock\n- PD-FC-040: 4.0 kW, in stock (PD-FC-045 is an accepted substitute)\n- PD-FC-045: 4.5 kW, in stock (accepted substitute for PD-FC-040)\n- PD-FC-075: 7.5 kW, in stock\n- PD-FC-110: 11.0 kW, in stock\n- PD-FC-150: 15.0 kW, 2 units in stock\nOptions: Profinet module (in stock), EMC filter (in stock)\nPower steps, smallest to largest: PD-FC-022 < PD-FC-040 < PD-FC-075 < PD-FC-110 < PD-FC-150\n\nCUSTOMER\nValkama Foods Oy, Seinäjoki, customer since 2018.\nBusiness: Food manufacturer with four production lines. Washdown (wet cleaning) areas, so enclosure rating IP54 is the minimum.\nINSTALLED BASE\n- L1: Line 1 Mixer, drive PD-FC-110, installed 2021. Profinet module, IP54, motor upsized from 7.5 kW to 11 kW in 2021\n- L2: Line 2 Conveyor, drive PD-FC-022, installed 2020. IP54\n- L3: Line 3 Pump, drive PD-FC-150, installed 2022. IP54\n- L4: Line 4 Packaging, drive PD-FC-040, installed 2025. IP54\nHISTORY (oldest first)\n- h1 [2018-03, ERP]: Ordered PD-FC-075 with EMC filter for Line 1 mixer.\n- h2 [2019-11, ERP]: Ordered spare control board for PD-FC-075.\n- h3 [2020-06, ERP]: Ordered PD-FC-022 for Line 2 conveyor.\n- h4 [2021-09, call_note]: Teemu wrote 'need a stronger drive for the mixer'. Anna phoned: the mixer motor was being upsized from 7.5 kW to 11 kW. Shipped PD-FC-110 together with a Profinet module.\n- h5 [2022-05, ERP]: PO 4412: PD-FC-150 for Line 3 pump.\n- h6 [2023-02, email]: Teemu: 'URGENT, line is down.' PD-FC-040 shipped overnight.\n- h7 [2023-08, call_note]: Teemu wrote 'URGENT' again but it was a planned shutdown two weeks later. Anna's note: Teemu says urgent for everything, always ask if the line is down.\n- h8 [2024-04, ERP]: PD-FC-040 out of stock. PD-FC-045 offered as substitute and accepted.\n- h9 [2024-09, email]: IP20 variant offered to save cost. Rejected by Sari: washdown area, IP54 minimum.\n- h10 [2025-10, ERP]: Ordered PD-FC-040 for Line 4 packaging line.\nSENDER: Teemu Hakala (Maintenance lead). Style: Short, informal messages. Says 'urgent' about almost everything. Says 'bigger' or 'stronger' about power, not physical size. Rarely gives part numbers.\n\nAPPROVED RULES: none yet.\n\nMESSAGE from Teemu Hakala:\n\"The bakery line drive is acting up again, we need a spare.\"\n\nAnswer (JSON only):"
+    },
+    "after": {
+      "interpretations": [
+        {
+          "summary": "PD-FC-040: same rating as the current PD-FC-040",
+          "part": "PD-FC-040",
+          "options": [],
+          "evidence": [
+            "Model reasoning: The message refers to the bakery line, which approved rule r002 defines as Line 4 (packaging). The installed drive on Line 4 is PD-FC-040, and the request for a spare means the same power rating as currently installed.",
+            "r002: 'the bakery line' refers to Line 4 (packaging)",
+            "L4: installed drive is PD-FC-040",
+            "h10: most recent order for Line 4 was PD-FC-040"
+          ],
+          "current_part": "PD-FC-040",
+          "change": "same",
+          "score": {
+            "value": 90,
+            "band": "Proceed",
+            "colour": "green",
+            "reasons": [
+              [
+                40,
+                "Learned rule r002 supports this reading"
+              ],
+              [
+                30,
+                "Past orders mention this drive (h10)"
+              ],
+              [
+                20,
+                "Nothing needed to pick the part is missing"
+              ]
+            ],
+            "rules_used": [
+              "r002"
+            ],
+            "ignored": []
+          },
+          "confidence": 0.9
+        }
+      ],
+      "missing_specs": [],
+      "uncertainties": [
+        "Unclear whether the drive is actually failing or just acting up; a spare may be requested as precaution"
+      ],
+      "question_to_ask": "Is the Line 4 packaging drive currently down, or is this a precautionary spare?",
+      "next_steps": [
+        "Check stock for PD-FC-040",
+        "Draft a quote for one spare PD-FC-040 with IP54 enclosure"
+      ],
+      "warnings": [],
+      "model": "qwen3.8-27b-mlx",
+      "prompt": "You help an account specialist who does not know this customer well.\nA customer sent a vague message. Work out what the customer most likely means,\nusing ONLY the facts given below. Never invent facts, part numbers or stock.\n\nHow to think:\n1. Find which production line / equipment the message refers to.\n   For \"like the X one but ...\" the reference machine is X.\n2. Read the APPROVED RULES first. They come from experienced specialists and\n   override everything else.\n3. current_part = the drive installed on the machine used as the reference. For\n   \"like the X one but ...\" the reference is machine X, not the machine the new\n   drive is for. Otherwise it is the machine the message is about (see INSTALLED BASE).\n4. change = how the wanted drive relates to current_part, using the wording of the\n   message, the rules and the sender's style:\n   - \"same\": same power rating (same as before, spare, replacement, fault report)\n   - \"next_higher\": one step up in power rating (for example bigger, stronger)\n   - \"next_lower\": one step down in power rating (for example smaller, weaker)\n   - \"other\": none of these fits; then choose 'part' yourself\n5. 'part' = your choice of part number from the catalogue (it is checked against\n   current_part and change afterwards).\n6. options = add-on options (such as a module) that the history or installed base\n   shows for the same machine.\n7. Give 1 to 3 interpretations, best first. Add an alternative only if the facts\n   really support another reading. If an approved rule settles the question, give\n   only one interpretation.\n8. In 'evidence' list the ids you relied on (for example h4, L1, r001), each with a\n   short reason. Always include the id of every approved rule you applied.\n9. Suggest ONE question the specialist can ask the customer by phone to confirm.\n10. If the message reports a problem and does not order anything, use change \"same\"\n    and suggest diagnosing first in the next steps.\n11. missing_specs = facts needed to choose the part that are NOT given below (for\n    example the power of a new motor). Empty list if the part follows from the facts.\n    Questions about urgency or fault codes go to 'uncertainties', not here.\n12. In 'reasoning', first write one or two sentences: which machine, which drive is\n    installed now, and what the sender's wording means. Then fill the other fields.\n\nReturn JSON only.\n\nEXAMPLE (a different customer, for format only)\nCustomer: Example Plastics Oy. INSTALLED BASE: L1: Line 1 press, drive PD-FC-075 (upgraded 2022).\nHistory: e1 [2022-02, call_note]: Customer asked for a 'stronger' drive for the press; motor was upsized, shipped PD-FC-075 with EMC filter.\nMessage from Ville: \"Need another drive for the press, same as last time.\"\nAnswer:\n{\"interpretations\":[{\"reasoning\":\"The press is Line 1. Its installed drive is PD-FC-075 from the 2022 upgrade, and 'same as last time' means that drive again with the EMC filter from that order.\",\"current_part\":\"PD-FC-075\",\"change\":\"same\",\"part\":\"PD-FC-075\",\"summary\":\"Same drive as the 2022 upgrade for the Line 1 press\",\"options\":[\"EMC filter\"],\"evidence\":[\"e1: last order for the press was PD-FC-075 with EMC filter\",\"L1: installed drive\"]},{\"reasoning\":\"The customer might want more power than last time.\",\"current_part\":\"PD-FC-075\",\"change\":\"next_higher\",\"part\":\"PD-FC-110\",\"summary\":\"One power class above the current press drive\",\"options\":[\"EMC filter\"],\"evidence\":[\"L1: installed drive PD-FC-075\"]}],\"missing_specs\":[],\"uncertainties\":[\"Unclear whether the press motor is unchanged since 2022\"],\"question_to_ask\":\"Is this a spare for the current 2022 setup?\",\"next_steps\":[\"Check stock\",\"Draft a quote with the EMC filter\"]}\n\nNOW THE REAL TASK\n\nPRODUCT CATALOGUE\nCompany: Pohjola Drive Systems Oy (fictional). All drives are 400 V. Standard enclosure IP54. A cheaper IP20 variant exists.\n- PD-FC-022: 2.2 kW, in stock\n- PD-FC-040: 4.0 kW, in stock (PD-FC-045 is an accepted substitute)\n- PD-FC-045: 4.5 kW, in stock (accepted substitute for PD-FC-040)\n- PD-FC-075: 7.5 kW, in stock\n- PD-FC-110: 11.0 kW, in stock\n- PD-FC-150: 15.0 kW, 2 units in stock\nOptions: Profinet module (in stock), EMC filter (in stock)\nPower steps, smallest to largest: PD-FC-022 < PD-FC-040 < PD-FC-075 < PD-FC-110 < PD-FC-150\n\nCUSTOMER\nValkama Foods Oy, Seinäjoki, customer since 2018.\nBusiness: Food manufacturer with four production lines. Washdown (wet cleaning) areas, so enclosure rating IP54 is the minimum.\nINSTALLED BASE\n- L1: Line 1 Mixer, drive PD-FC-110, installed 2021. Profinet module, IP54, motor upsized from 7.5 kW to 11 kW in 2021\n- L2: Line 2 Conveyor, drive PD-FC-022, installed 2020. IP54\n- L3: Line 3 Pump, drive PD-FC-150, installed 2022. IP54\n- L4: Line 4 Packaging, drive PD-FC-040, installed 2025. IP54\nHISTORY (oldest first)\n- h1 [2018-03, ERP]: Ordered PD-FC-075 with EMC filter for Line 1 mixer.\n- h2 [2019-11, ERP]: Ordered spare control board for PD-FC-075.\n- h3 [2020-06, ERP]: Ordered PD-FC-022 for Line 2 conveyor.\n- h4 [2021-09, call_note]: Teemu wrote 'need a stronger drive for the mixer'. Anna phoned: the mixer motor was being upsized from 7.5 kW to 11 kW. Shipped PD-FC-110 together with a Profinet module.\n- h5 [2022-05, ERP]: PO 4412: PD-FC-150 for Line 3 pump.\n- h6 [2023-02, email]: Teemu: 'URGENT, line is down.' PD-FC-040 shipped overnight.\n- h7 [2023-08, call_note]: Teemu wrote 'URGENT' again but it was a planned shutdown two weeks later. Anna's note: Teemu says urgent for everything, always ask if the line is down.\n- h8 [2024-04, ERP]: PD-FC-040 out of stock. PD-FC-045 offered as substitute and accepted.\n- h9 [2024-09, email]: IP20 variant offered to save cost. Rejected by Sari: washdown area, IP54 minimum.\n- h10 [2025-10, ERP]: Ordered PD-FC-040 for Line 4 packaging line.\nSENDER: Teemu Hakala (Maintenance lead). Style: Short, informal messages. Says 'urgent' about almost everything. Says 'bigger' or 'stronger' about power, not physical size. Rarely gives part numbers.\n\nAPPROVED RULES (follow these first)\n- r001 (all lines): For Valkama Foods Oy, when Teemu uses terms like “bigger”, “stronger”, or “smaller” to describe a drive, he refers to the required power class (higher or lower), not physical size.\n- r002 (all lines): For Valkama Foods Oy, when Teemu mentions 'the bakery line', it refers to Line 4 (packaging line).\n- r003 (all lines): For Valkama Foods Oy, when Teemu asks for a cheaper drive, he does not want a lower power class. Keep the same drive power rating as the installed drive, because it must match the motor. IP54 stays mandatory. Only price and optional extras can change.\n\nMESSAGE from Teemu Hakala:\n\"The bakery line drive is acting up again, we need a spare.\"\n\nAnswer (JSON only):"
+    }
+  }
+}

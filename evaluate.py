@@ -21,6 +21,7 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
+import config
 import interpreter
 import rules as rules_store
 
@@ -58,6 +59,7 @@ def evaluate(requests: list[dict], conditions: list[tuple[str, bool]], repeat: i
             wrong_confident = sum(t["part"] != gold["part"] and t["conf"] >= OVERCONFIDENT for t in trials)
             mode_part = Counter(t["part"] for t in trials).most_common(1)[0][0]
             row = {
+                "model": config.MODEL,
                 "id": req["id"],
                 "split": req.get("split", ""),
                 "condition": cond_name,
@@ -129,6 +131,7 @@ def main(argv=None) -> None:
 
     conditions = [("with_rules", True)] if args.rules_only else [("no_rules", False), ("with_rules", True)]
     saved = [r for r in rules_store.load_rules() if r.get("status") == "approved"]
+    print(f"Model: {config.MODEL}")
     print(f"{len(requests)} requests x {len(conditions)} condition(s) x {args.repeat} run(s). "
           f"Approved rules in use for 'with_rules': {len(saved)}")
     for r in saved:
@@ -154,7 +157,7 @@ def main(argv=None) -> None:
         writer.writerows(rows)
     md_path = RESULTS_DIR / f"eval_{stamp}.md"
     md_path.write_text(
-        "# Evaluation\n\n" + markdown_table(rows) + "\n## Summary\n\n"
+        f"# Evaluation\n\nModel: `{config.MODEL}` · temperature {config.TEMPERATURE} · {stamp}\n\n" + markdown_table(rows) + "\n## Summary\n\n"
         + "\n".join(f"- {line.strip()}" for line in summary) + "\n",
         encoding="utf-8",
     )

@@ -44,7 +44,19 @@ Switching to Qwen or another model = change `LLM_MODEL` (or `config.py`). Nothin
 | `data/rules.json` | Learned rules (starts empty) |
 | `data/log.json` | Created automatically, feeds the catch-up tab |
 
-## Demo script (5 minutes)
+## Event demo (1–2 minutes, Compare tab)
+
+1. Tab 1 "Compare: before / after", request #7 ("The bakery line drive is acting up again"). Click **Compare**.
+2. Left: without Anna's knowledge the reading is crossed out (wrong line). Right: with her rule r002 it is
+   Line 4, PD-FC-040, with the score and a "Why this score?" box.
+3. Before the event: run it live once, click **Save this run as the backup**, then switch on
+   **Use saved results** in the sidebar so the table demo never depends on the model.
+
+Confidence is calculated in `scoring.py` from evidence (learned rule +40, past order +30,
+nothing missing +20, each missing spec or other reading -15). The model no longer rates itself.
+Full explanation: [docs/confidence.md](docs/confidence.md).
+
+## Full demo script (5 minutes)
 
 1. Tab 1, request #1 ("same as before but a bit bigger. Rush."). Show the card and the evidence.
 2. Call result: the drive must also include the Profinet module. Choose **Correct**, write the reason, submit.

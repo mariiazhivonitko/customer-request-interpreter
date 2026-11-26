@@ -26,9 +26,25 @@ def _get_client():
     return _client
 
 
+def list_models() -> list:
+    """Model ids the server offers (LM Studio: the downloaded models). [] if unreachable."""
+    try:
+        ids = [m.id for m in _get_client().models.list().data]
+    except Exception:  # noqa: BLE001
+        return []
+    return sorted(i for i in ids if "embed" not in i.lower())
+
+
 def extract_json(text: str) -> dict:
     """Parse JSON even if the model wrapped it in code fences or added text."""
     text = (text or "").strip()
+    # reasoning models (Qwen3, DeepSeek-R1...) may put their thinking before the answer
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE).strip()
+    if not text:
+        raise ValueError(
+            "The model returned an empty answer. A thinking model probably used all its tokens "
+            "on reasoning: turn thinking off in LM Studio or raise LLM_MAX_TOKENS."
+        )
     text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.IGNORECASE)
     try:
         return json.loads(text)
@@ -49,6 +65,8 @@ def chat_json(prompt: str, schema: dict | None = None, name: str = "answer") -> 
     last_error = None
     for attempt in range(2):
         content = prompt
+        if "qwen3" in config.MODEL.lower():
+            content += "\n\n/no_think"  # Qwen3 switch: answer directly, no long hidden reasoning
         kwargs = dict(base)
         if schema is not None and attempt == 0:
             kwargs["response_format"] = {
@@ -56,7 +74,7 @@ def chat_json(prompt: str, schema: dict | None = None, name: str = "answer") -> 
                 "json_schema": {"name": name, "strict": True, "schema": schema},
             }
         if attempt == 1:
-            content = prompt + "\n\nReturn ONLY one valid JSON object. No other text."
+            content += "\n\nReturn ONLY one valid JSON object. No other text."
         try:
             resp = client.chat.completions.create(
                 messages=[{"role": "user", "content": content}], **kwargs

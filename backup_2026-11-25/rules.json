@@ -1,0 +1,35 @@
+[
+  {
+    "rule_id": "r001",
+    "scope": {
+      "customer_id": "valkama",
+      "line": "all"
+    },
+    "text": "For Valkama Foods Oy, when Teemu uses terms like “bigger”, “stronger”, or “smaller” to describe a drive, he refers to the required power class (higher or lower), not physical size.",
+    "learned_from": "corrected on request #1 (Teemu Hakala: \"We need a new drive for the mixer line, same as before but a bit bigger. Rush.\")",
+    "created": "2026-11-17",
+    "status": "approved"
+  },
+  {
+    "rule_id": "r002",
+    "scope": {
+      "customer_id": "valkama",
+      "line": "all"
+    },
+    "text": "For Valkama Foods Oy, when Teemu mentions 'the bakery line', it refers to Line 4 (packaging line).",
+    "learned_from": "corrected on request #7 (Teemu Hakala: \"The bakery line drive is acting up again, we need a spare.\")",
+    "created": "2026-11-17",
+    "status": "approved"
+  },
+  {
+    "rule_id": "r003",
+    "scope": {
+      "customer_id": "valkama",
+      "line": "all"
+    },
+    "text": "For Valkama Foods Oy, when Teemu asks for a cheaper drive, he does not want a lower power class. Keep the same drive power rating as the installed drive, because it must match the motor. IP54 stays mandatory. Only price and optional extras can change.",
+    "learned_from": "corrected on request #5 (Teemu Hakala: \"Can we get a cheaper one this time? Same drive for the pump.\")",
+    "created": "2026-11-17",
+    "status": "approved"
+  }
+]

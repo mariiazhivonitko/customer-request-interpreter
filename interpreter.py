@@ -12,8 +12,10 @@ import json
 import re
 from pathlib import Path
 
+import config
 import llm
 import rules as rules_store
+import scoring
 
 DATA = Path(__file__).parent / "data"
 
@@ -41,12 +43,18 @@ How to think:
    current_part and change afterwards).
 6. options = add-on options (such as a module) that the history or installed base
    shows for the same machine.
-7. Give up to 3 interpretations, best first, each with a confidence from 0 to 1.
-8. In 'evidence' list the ids you relied on (for example h4, L1, r001), each with a short reason.
+7. Give 1 to 3 interpretations, best first. Add an alternative only if the facts
+   really support another reading. If an approved rule settles the question, give
+   only one interpretation.
+8. In 'evidence' list the ids you relied on (for example h4, L1, r001), each with a
+   short reason. Always include the id of every approved rule you applied.
 9. Suggest ONE question the specialist can ask the customer by phone to confirm.
 10. If the message reports a problem and does not order anything, use change "same"
     and suggest diagnosing first in the next steps.
-11. In 'reasoning', first write one or two sentences: which machine, which drive is
+11. missing_specs = facts needed to choose the part that are NOT given below (for
+    example the power of a new motor). Empty list if the part follows from the facts.
+    Questions about urgency or fault codes go to 'uncertainties', not here.
+12. In 'reasoning', first write one or two sentences: which machine, which drive is
     installed now, and what the sender's wording means. Then fill the other fields.
 
 Return JSON only."""
@@ -56,15 +64,16 @@ Customer: Example Plastics Oy. INSTALLED BASE: L1: Line 1 press, drive PD-FC-075
 History: e1 [2022-02, call_note]: Customer asked for a 'stronger' drive for the press; motor was upsized, shipped PD-FC-075 with EMC filter.
 Message from Ville: "Need another drive for the press, same as last time."
 Answer:
-{"interpretations":[{"reasoning":"The press is Line 1. Its installed drive is PD-FC-075 from the 2022 upgrade, and 'same as last time' means that drive again with the EMC filter from that order.","current_part":"PD-FC-075","change":"same","part":"PD-FC-075","summary":"Same drive as the 2022 upgrade for the Line 1 press","options":["EMC filter"],"confidence":0.8,"evidence":["e1: last order for the press was PD-FC-075 with EMC filter","L1: installed drive"]},{"reasoning":"The customer might want more power than last time.","current_part":"PD-FC-075","change":"next_higher","part":"PD-FC-110","summary":"One power class above the current press drive","options":["EMC filter"],"confidence":0.15,"evidence":["L1: installed drive PD-FC-075"]}],"uncertainties":["Unclear whether the press motor is unchanged since 2022"],"question_to_ask":"Is this a spare for the current 2022 setup?","next_steps":["Check stock","Draft a quote with the EMC filter"]}
+{"interpretations":[{"reasoning":"The press is Line 1. Its installed drive is PD-FC-075 from the 2022 upgrade, and 'same as last time' means that drive again with the EMC filter from that order.","current_part":"PD-FC-075","change":"same","part":"PD-FC-075","summary":"Same drive as the 2022 upgrade for the Line 1 press","options":["EMC filter"],"evidence":["e1: last order for the press was PD-FC-075 with EMC filter","L1: installed drive"]},{"reasoning":"The customer might want more power than last time.","current_part":"PD-FC-075","change":"next_higher","part":"PD-FC-110","summary":"One power class above the current press drive","options":["EMC filter"],"evidence":["L1: installed drive PD-FC-075"]}],"missing_specs":[],"uncertainties":["Unclear whether the press motor is unchanged since 2022"],"question_to_ask":"Is this a spare for the current 2022 setup?","next_steps":["Check stock","Draft a quote with the EMC filter"]}
 """
 
 BASE_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
-    "required": ["interpretations", "uncertainties", "question_to_ask", "next_steps"],
+    "required": ["interpretations", "missing_specs", "uncertainties", "question_to_ask", "next_steps"],
     "properties": {
         "interpretations": {"type": "array", "items": {"type": "object"}},
+        "missing_specs": {"type": "array", "items": {"type": "string"}},
         "uncertainties": {"type": "array", "items": {"type": "string"}},
         "question_to_ask": {"type": "string"},
         "next_steps": {"type": "array", "items": {"type": "string"}},
@@ -107,7 +116,7 @@ def make_schema(products: dict) -> dict:
         "additionalProperties": False,
         "required": [
             "reasoning", "current_part", "change", "part",
-            "summary", "options", "confidence", "evidence",
+            "summary", "options", "evidence",
         ],
         "properties": {  # order matters: the model reasons first
             "reasoning": {"type": "string"},
@@ -116,7 +125,6 @@ def make_schema(products: dict) -> dict:
             "part": {"type": "string", "enum": parts},
             "summary": {"type": "string"},
             "options": {"type": "array", "items": {"type": "string"}},
-            "confidence": {"type": "number"},
             "evidence": {"type": "array", "items": {"type": "string"}},
         },
     }
@@ -228,10 +236,6 @@ def normalize(result: dict, products: dict) -> dict:
     cleaned = []
     warnings = []
     for it in (result.get("interpretations") or [])[:3]:
-        try:
-            conf = float(it.get("confidence", 0))
-        except (TypeError, ValueError):
-            conf = 0.0
         part = str(it.get("part", "none"))
         summary = str(it.get("summary", ""))
         current = str(it.get("current_part", ""))
@@ -255,27 +259,37 @@ def normalize(result: dict, products: dict) -> dict:
                 "summary": summary,
                 "part": part,
                 "options": options,
-                "confidence": max(0.0, min(1.0, conf)),
                 "evidence": evidence,
                 "current_part": current,
                 "change": change,
             }
         )
-    cleaned.sort(key=lambda x: x["confidence"], reverse=True)
+    # keep the model's order (best first); drop duplicate readings
     seen, unique = set(), []
     for it in cleaned:
         key = (it["part"], tuple(sorted(it["options"])))
-        if key not in seen and (it["confidence"] >= 0.05 or not unique):
+        if key not in seen:
             seen.add(key)
             unique.append(it)
     cleaned = unique
     return {
         "interpretations": cleaned,
+        "missing_specs": [str(m) for m in (result.get("missing_specs") or [])],
         "uncertainties": [str(u) for u in (result.get("uncertainties") or [])],
         "question_to_ask": str(result.get("question_to_ask", "")),
         "next_steps": [str(s) for s in (result.get("next_steps") or [])],
         "warnings": warnings,
     }
+
+
+def add_scores(result: dict, customer: dict) -> None:
+    """Evidence-based confidence for every interpretation (see scoring.py)."""
+    all_rules = rules_store.load_rules()
+    interps = result["interpretations"]
+    for k, it in enumerate(interps):
+        others = interps[:k] + interps[k + 1:]
+        it["score"] = scoring.score(it, others, result["missing_specs"], customer, all_rules)
+        it["confidence"] = it["score"]["value"] / 100  # kept for evaluate.py
 
 
 def interpret(request: dict, use_rules: bool = True) -> dict:
@@ -288,5 +302,7 @@ def interpret(request: dict, use_rules: bool = True) -> dict:
     prompt = build_prompt(customer, request, rule_list, products)
     raw = llm.chat_json(prompt, schema=make_schema(products), name="interpretation")
     result = normalize(raw, products)
+    add_scores(result, customer)
+    result["model"] = config.MODEL
     result["prompt"] = prompt  # handy for debugging in the UI
     return result
